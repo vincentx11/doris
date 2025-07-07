@@ -449,11 +449,11 @@ public class ComputeSignatureHelperTest {
         FunctionSignature signature = FunctionSignature.ret(ArrayType.of(TimeV2Type.INSTANCE)).args(
                         ArrayType.of(TimeV2Type.INSTANCE),
                         MapType.of(IntegerType.INSTANCE, TimeV2Type.INSTANCE), TimeV2Type.INSTANCE);
+        Map<Literal, Literal> map = Maps.newLinkedHashMap();
+        map.put(new IntegerLiteral(1), new TimeV2Literal("12:34:56.1234"));
         List<Expression> arguments = Lists.newArrayList(
                         new ArrayLiteral(Lists.newArrayList(new TimeV2Literal("12:34:56.12"))),
-                        new MapLiteral(Lists.newArrayList(new IntegerLiteral(1)),
-                                        Lists.newArrayList(new TimeV2Literal("12:34:56.1234"))),
-                        new TimeV2Literal("12:34:56.123"));
+                        new MapLiteral(map), new TimeV2Literal("12:34:56.123"));
         signature = ComputeSignatureHelper.computePrecision(new FakeComputeSignature(), signature, arguments);
 
         // Check array argument (precision should be 4 from the map value)
@@ -483,16 +483,17 @@ public class ComputeSignatureHelperTest {
                                                         DateTimeV2Type.SYSTEM_DEFAULT)),
                                         DateTimeV2Type.SYSTEM_DEFAULT);
 
+        Map<Literal, Literal> map = Maps.newLinkedHashMap();
+        map.put(new DateTimeV2Literal("2020-02-02 00:00:00.12"),
+                        new ArrayLiteral(Lists.newArrayList(new TimeV2Literal("12:34:56.1"))));
+        Map<Literal, Literal> map2 = Maps.newLinkedHashMap();
+        map2.put(new TimeV2Literal("12:34:56.123"), new DateTimeV2Literal("2020-02-02 00:00:00"));
         // Create complex arguments with different precisions
         List<Expression> arguments = Lists.newArrayList(
                         // Map(DateTimeV2(2) -> Array(TimeV2(1)))
-                        new MapLiteral(Lists.newArrayList(new DateTimeV2Literal("2020-02-02 00:00:00.12")),
-                                        Lists.newArrayList(new ArrayLiteral(
-                                                        Lists.newArrayList(new TimeV2Literal("12:34:56.1"))))),
+                        new MapLiteral(map),
                         // Array(Map(TimeV2(3) -> DateTimeV2(0)))
-                        new ArrayLiteral(Lists.newArrayList(new MapLiteral(
-                                        Lists.newArrayList(new TimeV2Literal("12:34:56.123")),
-                                        Lists.newArrayList(new DateTimeV2Literal("2020-02-02 00:00:00"))))),
+                        new ArrayLiteral(Lists.newArrayList(new MapLiteral(map2))),
                         // DateTimeV2(4)
                         new DateTimeV2Literal("2020-02-02 00:00:00.1234"));
 

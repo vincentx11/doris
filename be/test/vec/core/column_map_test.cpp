@@ -105,7 +105,7 @@ TEST(ColumnMapTest2, StringKeyTest) {
 
 TEST(ColumnMapTest2, StringKeyTestDuplicatedKeys) {
     auto col_map_str = ColumnMap(
-            ColumnNullable::create(ColumnString::create(), ColumnVector<uint8_t>::create()),
+            ColumnNullable::create(ColumnString::create(), ColumnVector<TYPE_BOOLEAN>::create()),
             ColumnInt32::create(), ColumnArray::ColumnOffsets::create());
     Array k1 = {Field::create_field<TYPE_STRING>("a"), Field::create_field<TYPE_STRING>("b"),
                 Field::create_field<TYPE_STRING>("c"), Field::create_field<TYPE_STRING>("a"),
