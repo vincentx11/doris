@@ -528,7 +528,6 @@ public class FoldConstantRuleOnBE implements ExpressionPatternRuleFactory {
         } else if (type.isMapType()) {
             MapType mapType = (MapType) type;
             int childCount = resultContent.getChildElementCount();
-            Map<Literal, Literal> map = new LinkedHashMap<>();
             List<Literal> allKeys = new ArrayList<>();
             List<Literal> allValues = new ArrayList<>();
             for (int i = 0; i < childCount; i = i + 2) {
@@ -539,12 +538,14 @@ public class FoldConstantRuleOnBE implements ExpressionPatternRuleFactory {
             }
             int offsetCount = resultContent.getChildOffsetCount();
             if (offsetCount == 1) {
+                Map<Literal, Literal> map = new LinkedHashMap<>();
                 AtomicInteger pos = new AtomicInteger(0);
                 allKeys.forEach(k -> map.put(k, allValues.get(pos.getAndIncrement())));
                 MapLiteral mapLiteral = new MapLiteral(map, mapType);
                 res.add(mapLiteral);
             } else {
                 for (int i = 0; i < offsetCount; ++i) {
+                    Map<Literal, Literal> map = new LinkedHashMap<>();
                     List<Literal> keyLiteral = new ArrayList<>();
                     List<Literal> valueLiteral = new ArrayList<>();
                     int startOffset = (int) ((i == 0) ? 0 : resultContent.getChildOffset(i - 1));
